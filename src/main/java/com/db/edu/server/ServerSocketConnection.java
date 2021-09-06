@@ -35,19 +35,20 @@ public class ServerSocketConnection {
         }
     }
 
-    void run() throws IOException {
+    private void run() throws IOException {
         while (true) {
             final String message = input.readUTF();
-            if (message.startsWith("/snd")) {
+            if (message.startsWith("/snd ")) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                 LocalDateTime now = LocalDateTime.now();
+
                 String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
                 output.writeUTF(processedMessage);
                 output.flush();
 
                 history.add(processedMessage);
 
-            } else if (message.startsWith("/hist")) {
+            } else if (message.equals("/hist")) {
                 String historyMessage = new String();
                 for (String element : history) {
                     historyMessage += element + System.lineSeparator();
