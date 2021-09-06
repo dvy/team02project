@@ -4,6 +4,13 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * This class implement client part of Chat Application.
+ * Connects to server and sends messages to other clients
+ * Chat commands:
+ *  /snd <message-text> - send message to other users of chat
+ *  /hist - get history of all chat's messages
+ */
 public class Client {
     private static final int MAX_LENGTH = 150;
 

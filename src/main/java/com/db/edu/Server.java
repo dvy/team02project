@@ -9,6 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/**
+ * This class implement string part of Chat Application.
+ * Processes incoming requests from clients
+ */
 public class Server {
     public static void main(String[] args) {
 
