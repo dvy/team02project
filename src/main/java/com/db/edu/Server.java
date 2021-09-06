@@ -7,11 +7,14 @@ import java.net.SocketAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 public class Server {
     public static void main(String[] args) {
 
         HashMap<SocketAddress, String> connections = new HashMap<>();
+        LinkedList<String> history = new LinkedList<>();
 
         try (final ServerSocket listener = new ServerSocket(10_000)) {
             try (
@@ -32,6 +35,17 @@ public class Server {
                         LocalDateTime now = LocalDateTime.now();
                         String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
                         output.writeUTF(processedMessage);
+                        output.flush();
+
+                        history.add(processedMessage);
+
+                    } else if (message.startsWith("/hist")) {
+                        String historyMessage = new String();
+                        for (var element : history) {
+                            historyMessage += element + System.lineSeparator();
+                        }
+
+                        output.writeUTF(historyMessage);
                         output.flush();
                     } else {
                         output.writeUTF("Not supported operation: " + message.substring(0, message.indexOf(" ")) + " is not recognised");
