@@ -30,7 +30,7 @@
               <outputDirectory>build</outputDirectory>
               <archive>
                 <manifest>
-                  <mainClass>com.db.edu.Client</mainClass>
+                  <mainClass>com.db.edu.client.ClientApplication</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>

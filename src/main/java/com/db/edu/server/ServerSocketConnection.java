@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class ServerSocketConnection {
+public class ServerSocketConnection implements Runnable {
 
     private static HashMap<SocketAddress, String> connections = new HashMap<>();
     private static LinkedList<String> history = new LinkedList<>();
@@ -28,37 +28,40 @@ public class ServerSocketConnection {
             if (address != null && !connections.containsKey(address)) {
                 connections.put(address, address.toString());
             }
-
-            run();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void run() throws IOException {
+    @Override
+    public void run() {
         while (true) {
-            final String message = input.readUTF();
-            if (message.startsWith("/snd ")) {
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
+            try {
+                final String message = input.readUTF();
+                if (message.startsWith("/snd ")) {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
 
-                String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
-                output.writeUTF(processedMessage);
-                output.flush();
+                    String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
+                    output.writeUTF(processedMessage);
+                    output.flush();
 
-                history.add(processedMessage);
+                    history.add(processedMessage);
 
-            } else if (message.equals("/hist")) {
-                String historyMessage = new String();
-                for (String element : history) {
-                    historyMessage += element + System.lineSeparator();
+                } else if (message.equals("/hist")) {
+                    String historyMessage = new String();
+                    for (String element : history) {
+                        historyMessage += element + System.lineSeparator();
+                    }
+
+                    output.writeUTF(historyMessage);
+                    output.flush();
+                } else {
+                    output.writeUTF("Not supported operation: " + message.substring(0, message.indexOf(" ")) + " is not recognised");
+                    output.flush();
                 }
-
-                output.writeUTF(historyMessage);
-                output.flush();
-            } else {
-                output.writeUTF("Not supported operation: " + message.substring(0, message.indexOf(" ")) + " is not recognised");
-                output.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
