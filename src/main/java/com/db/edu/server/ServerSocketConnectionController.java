@@ -8,12 +8,13 @@ import static com.db.edu.server.ServerSocketConnection.getNextMessageFromBuffer;
 public class ServerSocketConnectionController implements Runnable {
 
     LinkedList<ServerSocketConnection> connections = new LinkedList<>();
+
     @Override
     public void run() {
         while (true) {
             Optional<String> nextMessage = getNextMessageFromBuffer();
             if (nextMessage.isPresent()) {
-                for ( ServerSocketConnection connection : connections ) {
+                for (ServerSocketConnection connection : connections) {
                     connection.send(nextMessage.get());
                 }
             }
