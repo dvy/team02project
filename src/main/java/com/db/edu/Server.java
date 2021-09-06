@@ -17,11 +17,12 @@ public class Server {
 
                 while (true) {
                     final String message = input.readUTF();
+
                     if ( message.startsWith("\\snd") ) {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
-                        String processedMessage = now.toString() + " UserName " + message.replaceFirst("\\snd", "");
-                        output.writeChars(processedMessage);
+                        String processedMessage = dtf.format(now) + " UserName " + message.replaceFirst("\\snd", "");
+                        output.writeUTF(processedMessage);
                         output.flush();
                     }
                 }
