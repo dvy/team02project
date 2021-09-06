@@ -21,7 +21,7 @@ public class Server {
                     if ( message.startsWith("/snd") ) {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
-                        String processedMessage = dtf.format(now) + " UserName " + message.replaceFirst("/snd", "");
+                        String processedMessage = dtf.format(now) + " UserName " + message.replaceFirst("/snd ", "");
                         output.writeUTF(processedMessage);
                         output.flush();
                     }
