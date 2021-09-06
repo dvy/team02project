@@ -27,11 +27,14 @@ public class Server {
                 while (true) {
                     final String message = input.readUTF();
 
-                    if ( message.startsWith("/snd") ) {
+                    if (message.startsWith("/snd")) {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
                         String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
                         output.writeUTF(processedMessage);
+                        output.flush();
+                    } else {
+                        output.writeUTF("Not supported operation: " + message.substring(0, message.indexOf(" ")) + " is not recognised");
                         output.flush();
                     }
                 }
