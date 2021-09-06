@@ -46,6 +46,9 @@ public class Server {
 
                         output.writeUTF(historyMessage);
                         output.flush();
+                    } else {
+                        output.writeUTF("Not supported operation: " + message.substring(0, message.indexOf(" ")) + " is not recognised");
+                        output.flush();
                     }
                 }
 
