@@ -1,36 +1,32 @@
 package com.db.edu;
 
-import java.io.*;
-import java.net.Socket;
-import java.util.Scanner;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class Client {
-    private static final int MAX_LENGTH = 150;
 
-    public static void main(String[] args) {
+    public static final int MAX_LENGTH = 150;
 
-        try (
-                final Socket connection = new Socket("localhost", 10_000);
-                final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-                final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
-        ) {
-            while (true) {
-                Scanner in = new Scanner(System.in);
-                String message = in.nextLine();
-
-                if (message.startsWith("/snd ")) {
-                    if (message.length() > MAX_LENGTH + 5) {
-                        System.out.println("Message length should be less than 150 symbols");
-                        continue;
-                    }
-                }
-                output.writeUTF(message); // protocol
-                output.flush();
-
-                System.out.println(input.readUTF());
-            }
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        }
+    public void sendMessage(String message, DataOutputStream output) throws IOException {
+        output.writeUTF(message); // protocol
+        output.flush();
     }
+
+    public void readAnswer(DataInputStream input) throws IOException {
+        System.out.println(input.readUTF());
+    }
+
+    public boolean lengthCheck(String message) {
+        if (message.startsWith("/snd ")) {
+            if (message.length() > MAX_LENGTH + 5) {
+                System.out.println("Message length should be less than 150 symbols");
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
 }
