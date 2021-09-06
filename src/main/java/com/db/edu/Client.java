@@ -12,12 +12,12 @@ public class Client {
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
-            Scanner in = new Scanner(System.in);
-            output.writeUTF(in.nextLine()); // protocol
-            output.flush();
-
-            System.out.println(input.readUTF());
-
+            while (true) {
+                Scanner in = new Scanner(System.in);
+                output.writeUTF(in.nextLine()); // protocol
+                output.flush();
+                System.out.println(input.readUTF());
+            }
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
