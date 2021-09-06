@@ -4,16 +4,29 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Connects to server and sends messages to other clients
+ * Chat commands:
+ *  /snd <message-text> - send message to other users of chat
+ *  /hist - get history of all chat's messages
+ */
 public class Client {
     private static final int MAX_LENGTH = 150;
     private final String host;
     private final int port;
 
+    /**
+     * @param host - host connection number
+     * @param port - port connection number
+     */
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    /**
+     * Implements the connection with server
+     */
     public void socketConnectionRun() {
         try (
                 final Socket connection = new Socket(host, port);
