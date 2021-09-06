@@ -21,13 +21,13 @@ public class Client {
                 if (message.startsWith("/snd ")) {
                     if (message.length() > MAX_LENGTH + 5) {
                         System.out.println("Message length should be less than 150 symbols");
-                    } else {
-                        output.writeUTF(message); // protocol
-                        output.flush();
-
-                        System.out.println(input.readUTF());
+                        continue;
                     }
                 }
+                output.writeUTF(message); // protocol
+                output.flush();
+
+                System.out.println(input.readUTF());
             }
         } catch (IOException e) {
             e.printStackTrace(System.err);
