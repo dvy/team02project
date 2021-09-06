@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 
 public class Server {
     private int port;
+    private ServerSocketConnectionController controller = new ServerSocketConnectionController();
 
     /**
      * Class Server implements a logic of Metaphora chat server.
@@ -18,10 +19,10 @@ public class Server {
      *  Start listening given port. Create new Socket when connection established.
      */
     public void start() {
+        new Thread(controller).start();
         try ( final ServerSocket listener = new ServerSocket(port) ) {
             while (true) {
-                ServerSocketConnection connect = new ServerSocketConnection(listener.accept());
-                new Thread(connect).start();
+                controller.pushNewConnection(new ServerSocketConnection(listener.accept()));
             }
         } catch (IOException e) {
             e.printStackTrace();
