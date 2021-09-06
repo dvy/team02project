@@ -44,7 +44,7 @@ public class Server {
 
                     } else if (message.startsWith("/hist")) {
                         String historyMessage = new String();
-                        for (var element : history) {
+                        for (String element : history) {
                             historyMessage += element + System.lineSeparator();
                         }
 
