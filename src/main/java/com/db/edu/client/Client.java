@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 public class Client {
     private static final int MAX_LENGTH = 150;
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
 
     public Client(String host, int port) {
         this.host = host;
@@ -35,12 +35,12 @@ public class Client {
         }
     }
 
-    private void sendMessage(String message, DataOutputStream output) throws IOException {
+    public void sendMessage(String message, DataOutputStream output) throws IOException {
         output.writeUTF(message);
         output.flush();
     }
 
-    private void listenServer(DataInputStream input) throws IOException {
+    public void listenServer(DataInputStream input) throws IOException {
         Thread thread = new Thread(()->{
         while (true) {
             try {
@@ -54,7 +54,7 @@ public class Client {
         thread.start();
     }
 
-    private boolean lengthCheck(String message) {
+    public boolean lengthCheck(String message) {
         if (message.startsWith("/snd ")) {
             if (message.length() > MAX_LENGTH + 5) {
                 System.out.println("Message length should be less than 150 symbols");

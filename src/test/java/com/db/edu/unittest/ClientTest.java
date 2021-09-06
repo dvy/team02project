@@ -1,36 +1,38 @@
 package com.db.edu.unittest;
 
-import com.db.edu.Client;
-import com.db.edu.Server;
-import org.junit.jupiter.api.Test;
+import com.db.edu.client.Client;
+import org.junit.jupiter.api.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import static org.mockito.Mockito.*;
 
 public class ClientTest {
 
-    private Client client = new Client();
-    private Server serverMock = mock(Server.class);
+    private final Client client = new Client("localhost", 10_000);
     private DataOutputStream output = mock(DataOutputStream.class);
-    private DataInputStream input = mock(DataInputStream.class);
 
     @Test
-    public void weCanSendStringMessageToServer() throws IOException {
-        client.sendMessage("Hello", output);
+    public void weCanSendStringMessageToServerIfItsLengthIsLessThan150() throws IOException {
+        String message = "Hello";
+        if (client.lengthCheck(message)) {
+            client.sendMessage(message, output);
+        }
 
         verify(output, times(1)).writeUTF("Hello");
         verify(output, times(1)).flush();
     }
 
-    /*@Test
-    public void weCanReadStringMessageFromServer() throws IOException {
-        when(input.readUTF()).thenReturn("Hello");
-
-        client.readAnswer(input);
-
-        verify(input,times(1)).readUTF();
-    }*/
+    @Test
+    public void weCanNotSendMessageWhichLengthIsMoreThan150Symbols() {
+        Assertions.assertFalse(client.lengthCheck("/snd " +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa" +
+                        "aaaaaaaaaaaaaaaaaaaa"));
+    }
 }
