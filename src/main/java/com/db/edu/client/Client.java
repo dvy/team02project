@@ -27,11 +27,6 @@ public class Client {
         this.port = port;
     }
 
-    private String readCommand() {
-        Scanner in = new Scanner(System.in);
-        return in.nextLine();
-    }
-
     /**
      * Implements the connection with server
      */
@@ -41,29 +36,36 @@ public class Client {
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
-            this.listenServer(input);
+            listenServer(input);
             while (true) {
-                String message = readCommand();
-                try {
-                    processQuery(message, output);
-                }
-                catch (QueryProcessingException exception) {
-                    System.out.println(exception.getMessage());
-                }
+                processInput(output);
             }
         } catch (IOException e) {
             System.out.println("The server is not responding. Please restart chat.");
         }
-
     }
 
-    public void processQuery(String message, DataOutputStream output) throws IOException {
+    private String readCommand() {
+        Scanner in = new Scanner(System.in);
+        return in.nextLine();
+    }
+
+    private void processInput(DataOutputStream output) throws IOException {
+        try {
+            processQuery(readCommand(), output);
+        }
+        catch (QueryProcessingException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+    private void processQuery(String message, DataOutputStream output) throws IOException {
         Query query = QueryFactory.GetQuery(message);
         output.writeUTF(query.toString());
         output.flush();
     }
 
-    private void listenServer(DataInputStream input) throws IOException {
+    private void listenServer(DataInputStream input) {
         Thread thread = new Thread(()->{
         while (true) {
             try {
