@@ -59,11 +59,9 @@ public class ServerSocketConnection implements Runnable {
                     LocalDateTime now = LocalDateTime.now();
                     String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
                     messageBuffer.add(processedMessage);
-
                     history.save(processedMessage);
                 } else if (message.equals("/hist")) {
                     String chatHistory = history.load();
-
                     send(history.load());
                 }
             } catch (SocketException e) {
@@ -73,5 +71,9 @@ public class ServerSocketConnection implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isConnected() {
+        return connection.isConnected();
     }
 }
