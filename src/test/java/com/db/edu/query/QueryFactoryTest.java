@@ -1,7 +1,7 @@
-package com.db.edu.unittest.query;
+package com.db.edu.query;
 
+import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.QueryProcessingException;
-import com.db.edu.query.QueryFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +43,20 @@ public class QueryFactoryTest {
     @Test
     void shouldReturnCorrectQueryWhenTrySendCorrectHistoryQuery() {
         assertEquals("/hist", QueryFactory.getQuery("/hist").toString());
+    }
+
+    @Test
+    void shouldThrowEndOfSessionExceptionWhenTrySendCorrectExitQuery() {
+        assertThrows(EndOfSessionException.class, () -> {
+            QueryFactory.GetQuery("/exit");
+        });
+    }
+
+    @Test
+    void shouldThrowQueryProcessingExceptionWhenTrySendIncorrectExitQuery() {
+        assertThrows(QueryProcessingException.class, () -> {
+            QueryFactory.GetQuery("/exit hello");
+        });
     }
 
     @Test

@@ -1,6 +1,5 @@
-package com.db.edu.unittest.server;
+package com.db.edu.server;
 
-import com.db.edu.server.ServerSocketConnection;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;

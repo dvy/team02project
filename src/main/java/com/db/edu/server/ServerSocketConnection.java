@@ -49,13 +49,13 @@ public class ServerSocketConnection implements Runnable {
         networkOutput.flush();
     }
 
-    private String formatMessage(String pattern, String message){
+    String formatMessage(String pattern, String message){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime now = LocalDateTime.now();
         return "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
     }
 
-    private void processMessageToSend(String message){
+    void processMessageToSend(String message){
         messageBuffer.add(message);
         history.save(message);
     }
