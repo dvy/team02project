@@ -15,6 +15,10 @@ public class ServerSocketConnectionController implements Runnable {
             Optional<String> nextMessage = getNextMessageFromBuffer();
             if (nextMessage.isPresent()) {
                 for (ServerSocketConnection connection : connections) {
+                    if(!connection.isConnected()) {
+                        connections.remove(connection);
+                        continue;
+                    }
                     connection.send(nextMessage.get());
                 }
             }
