@@ -1,5 +1,6 @@
 package com.db.edu.server;
 
+import com.db.edu.exceptions.SocketDisconnectedException;
 import com.db.edu.utils.History;
 
 import java.io.*;
@@ -64,7 +65,7 @@ public class ServerSocketConnection implements Runnable {
                 }
             } catch (SocketException e) {
                 System.out.println("Socket " + address.toString() + " disconnected.");
-                return;
+                throw new SocketDisconnectedException(address.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

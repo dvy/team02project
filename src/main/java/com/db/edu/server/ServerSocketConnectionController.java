@@ -1,5 +1,7 @@
 package com.db.edu.server;
 
+import com.db.edu.exceptions.SocketDisconnectedException;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -9,6 +11,15 @@ import static com.db.edu.server.ServerSocketConnection.getNextMessageFromBuffer;
 public class ServerSocketConnectionController implements Runnable {
 
     LinkedList<ServerSocketConnection> connections = new LinkedList<>();
+
+    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+        @Override
+        public void uncaughtException(Thread th, Throwable ex) {
+            if ( ex instanceof SocketDisconnectedException ) {
+                connections.removeIf(a -> ex.getMessage().equals(a.getAddress().toString()));
+            }
+        }
+    };
 
     @Override
     public void run() {
@@ -33,6 +44,8 @@ public class ServerSocketConnectionController implements Runnable {
 
     public void pushNewConnection(ServerSocketConnection connection) {
         connections.push(connection);
-        new Thread(connection).start();
+        Thread t = new Thread(connection);
+        t.setUncaughtExceptionHandler(handler);
+        t.start();
     }
 }
