@@ -4,9 +4,9 @@ import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.QueryProcessingException;
 import com.db.edu.query.Query;
 import com.db.edu.query.QueryFactory;
+import com.db.edu.utils.NetworkController;
 
 import java.io.*;
-import java.net.Socket;
 import java.util.Scanner;
 
 /**
@@ -16,30 +16,20 @@ import java.util.Scanner;
  *  /hist - get history of all chat's messages
  */
 public class Client {
-    private final String host;
-    private final int port;
     private boolean shouldWork = true;
+    private NetworkController networkController;
 
-    /**
-     * @param host - host connection number
-     * @param port - port connection number
-     */
-    public Client(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public Client(NetworkController networkController) {
+        this.networkController = networkController;
     }
 
     /**
      * Implements the connection with server
      */
     public void socketConnectionRun() {
-        try (
-                final Socket connection = new Socket(host, port);
-                final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-                final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
-        ) {
-            listenServer(input);
-            sendToServer(output);
+        try{
+            listenServer();
+            sendToServer();
         } catch (IOException e) {
             System.out.println("The server is not responding. Please restart chat.");
         }
@@ -50,10 +40,10 @@ public class Client {
         return in.nextLine();
     }
 
-     void sendToServer(DataOutputStream outputStream) throws IOException {
+     void sendToServer() throws IOException {
         while (shouldWork) {
             try {
-                processInput(outputStream);
+                processInput();
             }
             catch (EndOfSessionException e) {
                 shouldWork = false;
@@ -61,26 +51,26 @@ public class Client {
         }
     }
 
-    void processInput(DataOutputStream output) throws IOException {
+    void processInput() throws IOException {
         try {
-            processQuery(readCommand(), output);
+            processQuery(readCommand());
         }
         catch (QueryProcessingException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    void processQuery(String message, DataOutputStream output) throws IOException {
+    void processQuery(String message) throws IOException {
         Query query = QueryFactory.getQuery(message);
-        output.writeUTF(query.toString());
-        output.flush();
+        networkController.getOutputStream().writeUTF(query.toString());
+        networkController.getOutputStream().flush();
     }
 
-    void listenServer(DataInputStream input) {
+    void listenServer() {
         Thread thread = new Thread(()->{
         while (true) {
             try {
-                System.out.println(input.readUTF());
+                System.out.println(networkController.getInputStream().readUTF());
             } catch (IOException e) {
                 break;
             }
