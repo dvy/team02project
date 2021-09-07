@@ -1,5 +1,9 @@
 package com.db.edu.client;
 
+import com.db.edu.exceptions.QueryProcessingException;
+import com.db.edu.query.Query;
+import com.db.edu.query.QueryFactory;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -11,7 +15,6 @@ import java.util.Scanner;
  *  /hist - get history of all chat's messages
  */
 public class Client {
-    private static final int MAX_LENGTH = 150;
     private final String host;
     private final int port;
 
@@ -38,18 +41,21 @@ public class Client {
                 Scanner in = new Scanner(System.in);
                 String message = in.nextLine();
 
-                if (!this.lengthCheck(message)) {
-                    continue;
+                try {
+                    processQuery(message, output);
                 }
-                this.sendMessage(message, output);
+                catch (QueryProcessingException exception) {
+                    System.out.println(exception.getMessage());
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            System.out.println(e.getMessage());
         }
     }
 
-    public void sendMessage(String message, DataOutputStream output) throws IOException {
-        output.writeUTF(message);
+    public void processQuery(String message, DataOutputStream output) throws IOException {
+        Query query = QueryFactory.GetQuery(message);
+        output.writeUTF(query.toString());
         output.flush();
     }
 
@@ -59,21 +65,12 @@ public class Client {
             try {
                 System.out.println(input.readUTF());
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 break;
             }
         }});
+
         thread.setDaemon(true);
         thread.start();
-    }
-
-    public boolean lengthCheck(String message) {
-        if (message.startsWith("/snd ")) {
-            if (message.length() > MAX_LENGTH + 5) {
-                System.out.println("Message length should be less than 150 symbols");
-                return false;
-            }
-        }
-        return true;
     }
 }

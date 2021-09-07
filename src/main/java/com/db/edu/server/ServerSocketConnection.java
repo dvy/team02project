@@ -61,7 +61,6 @@ public class ServerSocketConnection implements Runnable {
                     messageBuffer.add(processedMessage);
                     history.save(processedMessage);
                 } else if (message.equals("/hist")) {
-                    String chatHistory = history.load();
                     send(history.load());
                 }
             } catch (SocketException e) {
