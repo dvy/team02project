@@ -15,7 +15,6 @@ import java.util.Scanner;
  *  /hist - get history of all chat's messages
  */
 public class Client {
-    private static final int MAX_LENGTH = 150;
     private final String host;
     private final int port;
 
@@ -50,7 +49,7 @@ public class Client {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -66,10 +65,11 @@ public class Client {
             try {
                 System.out.println(input.readUTF());
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 break;
             }
         }});
+
         thread.setDaemon(true);
         thread.start();
     }

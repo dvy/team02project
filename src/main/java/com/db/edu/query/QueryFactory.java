@@ -8,13 +8,10 @@ public class QueryFactory {
     public static Query GetQuery(String query) {
         ParsedQuery parsed = QueryFactory.parse(query);
         switch (parsed.type) {
-            case SEND:
-                if(parsed.body == null) throw new QueryProcessingException("Too few arguments: /snd command get non-empty string");
-                if(parsed.body.length() > 150) throw new QueryProcessingException("Too long message. Message length should be shorter");
+            case "/snd":
                 return new SendQuery(parsed.body);
-            case HISTORY:
-                if(parsed.body != null) throw new QueryProcessingException("Too many arguments: /hist command does not get arguments");
-                return new HistoryQuery();
+            case "/hist":
+                return new HistoryQuery(parsed.body);
             default:
                 throw new QueryProcessingException("Unknown command");
         }
@@ -22,7 +19,7 @@ public class QueryFactory {
 
     private static ParsedQuery parse(String string) {
         if(Objects.equals(string, "")) throw new QueryProcessingException("Empty message");
-        if(!string.startsWith("/")) throw new QueryProcessingException("Wrong query format");
+        if(!string.startsWith("/")) throw new QueryProcessingException("Wrong query format. Command starts with '/'");
 
         String[] parsed = string.split("\\s");
 
@@ -31,10 +28,10 @@ public class QueryFactory {
     }
 
     private static class ParsedQuery {
-        public QueryType type;
+        public String type;
         public String body;
         ParsedQuery(String typeString, String body) {
-            this.type = QueryType.valueOf(typeString);
+            this.type = typeString;
             this.body = body;
         }
     }
