@@ -3,17 +3,18 @@ package com.db.edu.query;
 import com.db.edu.exceptions.QueryProcessingException;
 import java.util.Objects;
 
-
 public class QueryFactory {
     public static Query GetQuery(String query) {
         ParsedQuery parsed = QueryFactory.parse(query);
-        switch (parsed.type) {
+        switch (parsed.getType()) {
             case "/snd":
-                return new SendQuery(parsed.body);
+                return new SendQuery(parsed.getBody());
             case "/hist":
-                return new HistoryQuery(parsed.body);
+                return new HistoryQuery(parsed.getBody());
             case "/chid":
-                return new ChangeIDQuery(parsed.body);
+                return new ChangeIDQuery(parsed.getBody());
+            case "/exit":
+                return new ExitQuery(parsed.getBody());
             default:
                 throw new QueryProcessingException("Unknown command");
         }
@@ -30,11 +31,19 @@ public class QueryFactory {
     }
 
     private static class ParsedQuery {
-        public String type;
-        public String body;
+        private String type;
+        private String body;
         ParsedQuery(String typeString, String body) {
             this.type = typeString;
             this.body = body;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getBody() {
+            return body;
         }
     }
 }

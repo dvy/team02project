@@ -1,11 +1,13 @@
 package com.db.edu.client;
 
+import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.QueryProcessingException;
 import com.db.edu.query.Query;
 import com.db.edu.query.QueryFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
@@ -17,6 +19,7 @@ import java.util.Scanner;
 public class Client {
     private final String host;
     private final int port;
+    private static int FLAG_ACTIVE_CONNECTION = 0;
 
     /**
      * @param host - host connection number
@@ -42,25 +45,27 @@ public class Client {
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
             this.listenServer(input);
-            while (true) {
+            while (FLAG_ACTIVE_CONNECTION == 0) {
                 String message = readCommand();
                 try {
-                    processQuery(message, output);
+                    processQuery(message, output, connection);
                 }
                 catch (QueryProcessingException exception) {
                     System.out.println(exception.getMessage());
+                }
+                catch (EndOfSessionException e) {
+                    FLAG_ACTIVE_CONNECTION = 1;
                 }
             }
         } catch (IOException e) {
             System.out.println("The server is not responding. Please restart chat.");
         }
-
     }
 
-    public void processQuery(String message, DataOutputStream output) throws IOException {
-        Query query = QueryFactory.GetQuery(message);
-        output.writeUTF(query.toString());
-        output.flush();
+    public void processQuery(String message, DataOutputStream output, Socket socket) throws IOException {
+            Query query = QueryFactory.GetQuery(message);
+            output.writeUTF(query.toString());
+            output.flush();
     }
 
     private void listenServer(DataInputStream input) throws IOException {
