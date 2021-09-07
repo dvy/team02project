@@ -11,5 +11,7 @@ public class ServerApplication {
         } catch (IOException e) {
             System.out.println("Can't start server.");
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("Shutting down ...")));
     }
 }
