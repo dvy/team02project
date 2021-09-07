@@ -1,4 +1,9 @@
 package com.db.edu.exceptions;
 
-public class MessageSendException extends Exception {
+import java.io.IOException;
+
+public class MessageSendException extends IOException {
+    public MessageSendException(String message) {
+        super(message);
+    }
 }
