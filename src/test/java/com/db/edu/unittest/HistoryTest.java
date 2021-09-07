@@ -54,7 +54,6 @@ public class HistoryTest {
     }
 
     @Test
-    @Disabled
     public void loadFromEmptyHistory() {
         String historyContent = history.load();
         assertEquals("History is empty", historyContent);
