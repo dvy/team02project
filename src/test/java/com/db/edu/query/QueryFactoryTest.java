@@ -48,14 +48,14 @@ public class QueryFactoryTest {
     @Test
     void shouldThrowEndOfSessionExceptionWhenTrySendCorrectExitQuery() {
         assertThrows(EndOfSessionException.class, () -> {
-            QueryFactory.GetQuery("/exit");
+            QueryFactory.getQuery("/exit");
         });
     }
 
     @Test
     void shouldThrowQueryProcessingExceptionWhenTrySendIncorrectExitQuery() {
         assertThrows(QueryProcessingException.class, () -> {
-            QueryFactory.GetQuery("/exit hello");
+            QueryFactory.getQuery("/exit hello");
         });
     }
 
