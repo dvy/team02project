@@ -3,6 +3,7 @@ package com.db.edu.utils;
 
 import java.io.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 public class History {
     private String historyFilePath;
@@ -23,21 +24,18 @@ public class History {
         }
 
     }
+
     public String load(){
-        StringBuilder historyMessage = new StringBuilder();
+        String historyMessage = "";
         try (BufferedReader fileReader = new BufferedReader(new FileReader(historyFilePath))){
             historyLock.readLock().lock();
-            String line;
-            while ((line = fileReader.readLine()) != null) {
-                historyMessage.append(line).append(System.lineSeparator());
-            }
+            historyMessage = fileReader.lines().collect(Collectors.joining(System.lineSeparator()));
             historyLock.readLock().unlock();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
 
-        String result = historyMessage.toString();
-        return result.isEmpty() ? "History is empty" : result;
+        return historyMessage.isEmpty() ? "History is empty" : historyMessage;
     }
 }
 
