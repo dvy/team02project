@@ -15,6 +15,7 @@ public class QueryFactory {
                 return new ChangeIDQuery(parsed.getBody());
             case "/exit":
                 return new ExitQuery(parsed.getBody());
+
             default:
                 throw new QueryProcessingException("Unknown command");
         }
@@ -31,8 +32,9 @@ public class QueryFactory {
     }
 
     private static class ParsedQuery {
-        private String type;
-        private String body;
+        private final String type;
+        private final String body;
+
         ParsedQuery(String typeString, String body) {
             this.type = typeString;
             this.body = body;

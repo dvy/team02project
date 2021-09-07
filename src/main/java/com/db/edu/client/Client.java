@@ -19,7 +19,7 @@ import java.util.Scanner;
 public class Client {
     private final String host;
     private final int port;
-    private static int FLAG_ACTIVE_CONNECTION = 0;
+    private boolean shouldWork = true;
 
     /**
      * @param host - host connection number
@@ -28,11 +28,6 @@ public class Client {
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
-    }
-
-    private String readCommand() {
-        Scanner in = new Scanner(System.in);
-        return in.nextLine();
     }
 
     /**
@@ -45,16 +40,13 @@ public class Client {
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
             this.listenServer(input);
-            while (FLAG_ACTIVE_CONNECTION == 0) {
+            while (shouldWork) {
                 String message = readCommand();
                 try {
-                    processQuery(message, output, connection);
-                }
-                catch (QueryProcessingException exception) {
-                    System.out.println(exception.getMessage());
+                    processInput(output);
                 }
                 catch (EndOfSessionException e) {
-                    FLAG_ACTIVE_CONNECTION = 1;
+                    shouldWork = false;
                 }
             }
         } catch (IOException e) {
@@ -62,13 +54,27 @@ public class Client {
         }
     }
 
-    public void processQuery(String message, DataOutputStream output, Socket socket) throws IOException {
-            Query query = QueryFactory.GetQuery(message);
-            output.writeUTF(query.toString());
-            output.flush();
+    private String readCommand() {
+        Scanner in = new Scanner(System.in);
+        return in.nextLine();
     }
 
-    private void listenServer(DataInputStream input) throws IOException {
+    private void processInput(DataOutputStream output) throws IOException {
+        try {
+            processQuery(readCommand(), output);
+        }
+        catch (QueryProcessingException exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+    private void processQuery(String message, DataOutputStream output) throws IOException {
+        Query query = QueryFactory.GetQuery(message);
+        output.writeUTF(query.toString());
+        output.flush();
+    }
+
+    private void listenServer(DataInputStream input) {
         Thread thread = new Thread(()->{
         while (true) {
             try {
