@@ -18,7 +18,7 @@ public class QueryFactory {
     }
 
     private static ParsedQuery parse(String string) {
-        if(Objects.equals(string, "")) throw new QueryProcessingException("Empty message");
+        if(Objects.equals(string, "")) throw new QueryProcessingException("Empty query");
         if(!string.startsWith("/")) throw new QueryProcessingException("Wrong query format. Command starts with '/'");
 
         String[] parsed = string.split("\\s");
