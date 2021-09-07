@@ -12,12 +12,9 @@ public class ServerSocketConnectionController implements Runnable {
 
     LinkedList<ServerSocketConnection> connections = new LinkedList<>();
 
-    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
-        @Override
-        public void uncaughtException(Thread th, Throwable ex) {
-            if ( ex instanceof SocketDisconnectedException ) {
-                connections.removeIf(a -> ex.getMessage().equals(a.getAddress().toString()));
-            }
+    Thread.UncaughtExceptionHandler handler = (th, ex) -> {
+        if (ex instanceof SocketDisconnectedException) {
+            connections.removeIf(a -> ex.getMessage().equals(a.getAddress().toString()));
         }
     };
 
@@ -27,11 +24,6 @@ public class ServerSocketConnectionController implements Runnable {
             Optional<String> nextMessage = getNextMessageFromBuffer();
             if (nextMessage.isPresent()) {
                 for (ServerSocketConnection connection : connections) {
-                    if(!connection.isConnected()) {
-                        connections.remove(connection);
-                        continue;
-                    }
-
                     try {
                         connection.send(nextMessage.get());
                     } catch (IOException e) {
@@ -46,6 +38,7 @@ public class ServerSocketConnectionController implements Runnable {
         connections.push(connection);
         Thread t = new Thread(connection);
         t.setUncaughtExceptionHandler(handler);
+        t.setDaemon(true);
         t.start();
     }
 }

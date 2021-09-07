@@ -2,6 +2,7 @@ package com.db.edu.server;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.Scanner;
 
 public class Server {
     private static String defaultHistoryFilePath = "history.log";
@@ -25,13 +26,40 @@ public class Server {
         this.historyFilePath = defaultHistoryFilePath;
     }
 
+    volatile boolean shouldExit;
     /**
      * Start listening given port. Create new Socket when connection established.
      */
     public void start() throws IOException {
-        new Thread(controller).start();
+        Thread controllerThread = new Thread(controller);
+        controllerThread.setDaemon(true);
+        controllerThread.start();
+
         try (final ServerSocket listener = new ServerSocket(port)) {
-            while (true) {
+            Thread t = new Thread(() -> {
+                Scanner scanner = new Scanner(System.in);
+                while (true){
+                    if (scanner.hasNext()) {
+                        String s = scanner.next();
+                        if (s.equals("/quit")) {
+                            controllerThread.interrupt();
+                            try {
+                                listener.close();
+                            } catch (IOException e) {
+                                System.out.println("Can't close server");
+                            }
+                            System.out.println("Server shut down.");
+                            shouldExit = true;
+                            return;
+                        }
+                    }
+                }
+            });
+
+            t.setDaemon(true);
+            t.start();
+
+            while (!shouldExit) {
                 controller.pushNewConnection(new ServerSocketConnection(listener.accept(), historyFilePath));
             }
         }
