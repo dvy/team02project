@@ -7,7 +7,6 @@ import com.db.edu.query.QueryFactory;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
@@ -72,7 +71,7 @@ public class Client {
     }
 
     void processQuery(String message, DataOutputStream output) throws IOException {
-        Query query = QueryFactory.GetQuery(message);
+        Query query = QueryFactory.getQuery(message);
         output.writeUTF(query.toString());
         output.flush();
     }

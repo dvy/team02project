@@ -10,50 +10,50 @@ public class QueryFactoryTest {
     @Test
     public void weWillReceiveQueryProcessingExceptionIfWeWillParseEmptyString() {
         assertThrows(QueryProcessingException.class,
-                () -> QueryFactory.GetQuery(""));
+                () -> QueryFactory.getQuery(""));
     }
 
     @Test
     public void weWillReceiveQueryProcessingExceptionIfWeWillParseSlashString() {
         assertThrows(QueryProcessingException.class,
-                () -> QueryFactory.GetQuery("hi"));
+                () -> QueryFactory.getQuery("hi"));
     }
 
     @Test
     public void weWillReceiveQueryProcessingExceptionIfWeWillEnterIncorrectCommand() {
         assertThrows(QueryProcessingException.class,
-                () -> QueryFactory.GetQuery("/incorrect command"));
+                () -> QueryFactory.getQuery("/incorrect command"));
     }
 
     @Test
     void shouldReturnErrorWhenTrySendEmptyMessage() {
-        assertThrows(QueryProcessingException.class, () -> QueryFactory.GetQuery("/snd"));
+        assertThrows(QueryProcessingException.class, () -> QueryFactory.getQuery("/snd"));
     }
 
     @Test
     void shouldReturnCorrectQueryWhenTrySendCorrectMessage() {
-        assertEquals("/snd hello", QueryFactory.GetQuery("/snd hello").toString());
+        assertEquals("/snd hello", QueryFactory.getQuery("/snd hello").toString());
     }
 
     @Test
     void shouldReturnErrorWhenTrySendWrongHistoryQuery() {
-        assertThrows(QueryProcessingException.class, () -> QueryFactory.GetQuery("/hist hello"));
+        assertThrows(QueryProcessingException.class, () -> QueryFactory.getQuery("/hist hello"));
     }
 
     @Test
     void shouldReturnCorrectQueryWhenTrySendCorrectHistoryQuery() {
-        assertEquals("/hist", QueryFactory.GetQuery("/hist").toString());
+        assertEquals("/hist", QueryFactory.getQuery("/hist").toString());
     }
 
     @Test
     void shouldReturnErrorWhenTrySendUnknownTypeOfQuery() {
-        assertThrows(QueryProcessingException.class, () -> QueryFactory.GetQuery("/hello"));
+        assertThrows(QueryProcessingException.class, () -> QueryFactory.getQuery("/hello"));
     }
 
     @Test
     void shouldReturnErrorWhenTrySendTooLongMessage() {
         assertThrows(QueryProcessingException.class,
-                () -> QueryFactory.GetQuery("/snd " +
+                () -> QueryFactory.getQuery("/snd " +
                         "longmessagelongmessagelongmessagelongmessagelongmessagelongmessagelongmessage" +
                         "longmessagelongmessagelongmessagelongmessagelongmessagelongmessagelongmessage"));
     }

@@ -1,10 +1,15 @@
 package com.db.edu.query;
 
 import com.db.edu.exceptions.QueryProcessingException;
+
 import java.util.Objects;
 
 public class QueryFactory {
-    public static Query GetQuery(String query) {
+
+    private QueryFactory() {
+    }
+
+    public static Query getQuery(String query) {
         ParsedQuery parsed = QueryFactory.parse(query);
         switch (parsed.getType()) {
             case "/snd":
@@ -22,12 +27,12 @@ public class QueryFactory {
     }
 
     private static ParsedQuery parse(String string) {
-        if(Objects.equals(string, "")) throw new QueryProcessingException("Empty query");
-        if(!string.startsWith("/")) throw new QueryProcessingException("Wrong query format. Command starts with '/'");
+        if (Objects.equals(string, "")) throw new QueryProcessingException("Empty query");
+        if (!string.startsWith("/")) throw new QueryProcessingException("Wrong query format. Command starts with '/'");
 
         String[] parsed = string.split("\\s", 2);
 
-        if(parsed.length == 1) return new ParsedQuery(parsed[0], null);
+        if (parsed.length == 1) return new ParsedQuery(parsed[0], null);
         else return new ParsedQuery(parsed[0], parsed[1]);
     }
 
