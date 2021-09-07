@@ -42,7 +42,7 @@ public class Server {
                 while (true){
                     if (scanner.hasNext()) {
                         String s = scanner.next();
-                        if (s.equals("/quit")) {
+                        if (s.equals("/exit")) {
                             controllerThread.interrupt();
                             try {
                                 listener.close();
