@@ -27,6 +27,7 @@ public class Server {
     }
 
     volatile boolean shouldExit;
+
     /**
      * Start listening given port. Create new Socket when connection established.
      */
