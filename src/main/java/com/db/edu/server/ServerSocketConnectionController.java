@@ -1,5 +1,6 @@
 package com.db.edu.server;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -19,7 +20,12 @@ public class ServerSocketConnectionController implements Runnable {
                         connections.remove(connection);
                         continue;
                     }
-                    connection.send(nextMessage.get());
+
+                    try {
+                        connection.send(nextMessage.get());
+                    } catch (IOException e) {
+                        System.out.println("Can't send message to " + connection.getAddress() + " : IO error");
+                    }
                 }
             }
         }

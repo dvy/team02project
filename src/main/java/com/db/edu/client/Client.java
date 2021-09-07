@@ -27,6 +27,11 @@ public class Client {
         this.port = port;
     }
 
+    private String readCommand() {
+        Scanner in = new Scanner(System.in);
+        return in.nextLine();
+    }
+
     /**
      * Implements the connection with server
      */
@@ -38,8 +43,7 @@ public class Client {
         ) {
             this.listenServer(input);
             while (true) {
-                Scanner in = new Scanner(System.in);
-                String message = in.nextLine();
+                String message = readCommand();
 
                 try {
                     processQuery(message, output);
