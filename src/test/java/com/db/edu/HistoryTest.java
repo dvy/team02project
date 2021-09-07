@@ -1,4 +1,4 @@
-package com.db.edu.unittest;
+package com.db.edu;
 
 import com.db.edu.utils.History;
 import org.junit.jupiter.api.AfterEach;

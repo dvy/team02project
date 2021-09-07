@@ -1,8 +1,7 @@
-package com.db.edu.unittest.query;
+package com.db.edu.query;
 
 import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.QueryProcessingException;
-import com.db.edu.query.ExitQuery;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

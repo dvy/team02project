@@ -7,7 +7,6 @@ import com.db.edu.query.QueryFactory;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
@@ -53,7 +52,6 @@ public class Client {
 
      void sendToServer(DataOutputStream outputStream) throws IOException {
         while (shouldWork) {
-            String message = readCommand();
             try {
                 processInput(outputStream);
             }
