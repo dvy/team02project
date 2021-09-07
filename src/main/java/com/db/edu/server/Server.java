@@ -16,7 +16,7 @@ public class Server {
      *
      * @param port - number of port server should be listening
      */
-    Server(int port, String historyFilePath) {
+    public Server(int port, String historyFilePath) {
         this.port = port;
         this.historyFilePath = historyFilePath;
     }
@@ -26,7 +26,7 @@ public class Server {
         this.historyFilePath = defaultHistoryFilePath;
     }
 
-    volatile boolean shouldExit;
+    volatile private boolean shouldExit;
 
     /**
      * Start listening given port. Create new Socket when connection established.

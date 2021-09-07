@@ -75,7 +75,7 @@ public class ServerSocketConnection implements Runnable {
                 throw new SocketDisconnectedException(address.toString());
             } catch (IOException e) {
                 System.out.println("Socket " + address.toString() + " exception while reading.");
-                return;
+                throw new SocketDisconnectedException(address.toString());
             }
         }
     }
