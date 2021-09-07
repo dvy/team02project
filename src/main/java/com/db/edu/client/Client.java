@@ -44,7 +44,6 @@ public class Client {
             this.listenServer(input);
             while (true) {
                 String message = readCommand();
-
                 try {
                     processQuery(message, output);
                 }
@@ -53,8 +52,9 @@ public class Client {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("The server is not responding. Please restart chat.");
         }
+
     }
 
     public void processQuery(String message, DataOutputStream output) throws IOException {
@@ -63,16 +63,16 @@ public class Client {
         output.flush();
     }
 
-    public void listenServer(DataInputStream input) throws IOException {
+    private void listenServer(DataInputStream input) throws IOException {
         Thread thread = new Thread(()->{
         while (true) {
             try {
                 System.out.println(input.readUTF());
             } catch (IOException e) {
-                System.out.println(e.getMessage());
                 break;
             }
-        }});
+        }
+        });
 
         thread.setDaemon(true);
         thread.start();
