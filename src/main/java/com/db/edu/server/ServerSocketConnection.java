@@ -1,7 +1,7 @@
 package com.db.edu.server;
 
 import com.db.edu.exceptions.MessageReadException;
-import com.db.edu.exceptions.MessageWriteException;
+import com.db.edu.exceptions.MessageSendException;
 import com.db.edu.utils.History;
 import com.db.edu.utils.NetworkIOController;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ServerSocketConnection implements Runnable {
-    private final static String sendPrefix = "/snd";
+    private final static String sendPrefix = "/snd ";
     private final static String historyPrefix = "/hist";
 
     private static ConcurrentHashMap<SocketAddress, String> connections = new ConcurrentHashMap<>();
@@ -42,7 +42,7 @@ public class ServerSocketConnection implements Runnable {
         return address;
     }
 
-    public void send(String message) throws MessageWriteException {
+    public void send(String message) throws MessageSendException {
         networkIOController.write(message);
     }
 
@@ -53,7 +53,7 @@ public class ServerSocketConnection implements Runnable {
     String formatMessage(String pattern, String message){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
         LocalDateTime now = LocalDateTime.now();
-        return "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
+        return "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst(sendPrefix, "");
     }
 
     void processMessageToSend(String message){
@@ -61,13 +61,13 @@ public class ServerSocketConnection implements Runnable {
         history.save(message);
     }
 
-    void processHistoryMessage(String message) throws MessageWriteException {
+    void processHistoryMessage() throws MessageSendException {
         send(history.load());
     }
 
-    void processMessage(String message) throws MessageWriteException {
+    void processMessage(String message) throws MessageSendException {
         if (message.startsWith(sendPrefix)) processMessageToSend(formatMessage("yyyy/MM/dd HH:mm:ss", message));
-        if (message.startsWith(historyPrefix)) processHistoryMessage(message);
+        if (message.equals(historyPrefix)) processHistoryMessage();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ServerSocketConnection implements Runnable {
         while (true) {
             try {
                 processMessage(read());
-            } catch (MessageWriteException e) {
+            } catch (MessageSendException e) {
                 System.out.println("Socket " + address.toString() + " : Can't send message.");
             } catch (MessageReadException e) {
                 System.out.println("Socket " + address.toString() + " : Can't read message.");
