@@ -62,7 +62,7 @@ public class ServerSocketConnection implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (isConnected()) {
             try {
                 final String message = networkInput.readUTF();
                 if (message.startsWith("/snd ")) {

@@ -9,7 +9,7 @@ public class ServerApplication {
         try {
             server.start();
         } catch (IOException e) {
-            System.out.println("Can't start server.");
+            System.out.println("Troubles with server");
         }
     }
 }
