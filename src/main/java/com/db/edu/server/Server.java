@@ -5,23 +5,27 @@ import java.net.ServerSocket;
 
 public class Server {
     private int port;
+    private String historyFilePath;
+    private ServerSocketConnectionController controller = new ServerSocketConnectionController();
 
     /**
      * Class Server implements a logic of Metaphora chat server.
+     *
      * @param port - number of port server should be listening
      */
-    Server(int port) {
+    Server(int port, String historyFilePath) {
         this.port = port;
+        this.historyFilePath = historyFilePath;
     }
 
     /**
-     *  Start listening given port. Create new Socket when connection established.
+     * Start listening given port. Create new Socket when connection established.
      */
     public void start() {
-        try ( final ServerSocket listener = new ServerSocket(port) ) {
+        new Thread(controller).start();
+        try (final ServerSocket listener = new ServerSocket(port)) {
             while (true) {
-                ServerSocketConnection connect = new ServerSocketConnection(listener.accept());
-                new Thread(connect).start();
+                controller.pushNewConnection(new ServerSocketConnection(listener.accept(), historyFilePath));
             }
         } catch (IOException e) {
             e.printStackTrace();
