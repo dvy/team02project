@@ -53,7 +53,6 @@ public class Client {
 
      void sendToServer(DataOutputStream outputStream) throws IOException {
         while (shouldWork) {
-            String message = readCommand();
             try {
                 processInput(outputStream);
             }
