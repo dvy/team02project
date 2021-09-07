@@ -1,5 +1,7 @@
 package com.db.edu.server;
 
+import com.db.edu.utils.History;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -21,9 +23,7 @@ public class ServerSocketConnection implements Runnable {
     private DataOutputStream networkOutput;
     private SocketAddress address;
 
-    private ReentrantReadWriteLock historyLock = new ReentrantReadWriteLock();
-    private String historyFilePath;
-
+    private History history;
     public static Optional<String> getNextMessageFromBuffer() {
         return Optional.ofNullable(messageBuffer.poll());
     }
@@ -33,8 +33,7 @@ public class ServerSocketConnection implements Runnable {
         this.networkInput = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
         this.networkOutput = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
 
-        this.historyFilePath = filePath;
-
+        this.history = new History(filePath);
         address = connection.getRemoteSocketAddress();
         if (address != null && !connections.containsKey(address)) {
             connections.put(address, address.toString());
@@ -58,30 +57,12 @@ public class ServerSocketConnection implements Runnable {
                 if (message.startsWith("/snd ")) {
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                     LocalDateTime now = LocalDateTime.now();
-
                     String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
                     messageBuffer.add(processedMessage);
-
-                    historyLock.writeLock().lock();
-                    BufferedWriter fileWriter = new BufferedWriter(new FileWriter(historyFilePath, true));
-                    fileWriter.append(processedMessage + System.lineSeparator());
-                    fileWriter.flush();
-                    historyLock.writeLock().unlock();
-
+                    history.save(processedMessage);
                 } else if (message.equals("/hist")) {
-                    StringBuilder historyMessage = new StringBuilder();
-
-                    historyLock.readLock().lock();
-                    BufferedReader fileReader = new BufferedReader(new FileReader(historyFilePath));
-                    String line;
-                    while ((line = fileReader.readLine()) != null) {
-                        historyMessage.append(line).append(System.lineSeparator());
-                    }
-                    historyLock.readLock().unlock();
-
-                    send(historyMessage.toString());
-                } else {
-                    send("Not supported operation: " + message.substring(0, message.indexOf(' ')) + " is not recognised");
+                    String chatHistory = history.load();
+                    send(history.load());
                 }
             } catch (SocketException e) {
                 System.out.println("Socket " + address.toString() + " disconnected.");
@@ -90,5 +71,9 @@ public class ServerSocketConnection implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isConnected() {
+        return connection.isConnected();
     }
 }
