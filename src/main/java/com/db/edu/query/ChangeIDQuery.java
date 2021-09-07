@@ -2,7 +2,7 @@ package com.db.edu.query;
 
 import com.db.edu.exceptions.QueryProcessingException;
 
-public class ChangeIDQuery {
+public class ChangeIDQuery implements Query {
     String message;
 
     public ChangeIDQuery(String message) {
