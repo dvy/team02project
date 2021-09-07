@@ -23,7 +23,7 @@ public class QueryFactory {
         if(Objects.equals(string, "")) throw new QueryProcessingException("Empty query");
         if(!string.startsWith("/")) throw new QueryProcessingException("Wrong query format. Command starts with '/'");
 
-        String[] parsed = string.split("\\s");
+        String[] parsed = string.split("\\s", 2);
 
         if(parsed.length == 1) return new ParsedQuery(parsed[0], null);
         else return new ParsedQuery(parsed[0], parsed[1]);
