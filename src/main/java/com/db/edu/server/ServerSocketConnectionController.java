@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.db.edu.server.ServerSocketConnection.getNextMessageFromBuffer;
 
 public class ServerSocketConnectionController implements Runnable {
-
-    LinkedList<ServerSocketConnection> connections = new LinkedList<>();
+    ConcurrentLinkedQueue<ServerSocketConnection> connections = new ConcurrentLinkedQueue<>();
 
     Thread.UncaughtExceptionHandler handler = (th, ex) -> {
         if (ex instanceof SocketDisconnectedException) {
@@ -36,7 +36,7 @@ public class ServerSocketConnectionController implements Runnable {
     }
 
     public void pushNewConnection(ServerSocketConnection connection) {
-        connections.push(connection);
+        connections.add(connection);
         Thread t = new Thread(connection);
         t.setUncaughtExceptionHandler(handler);
         t.setDaemon(true);
