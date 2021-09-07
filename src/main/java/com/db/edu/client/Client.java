@@ -39,27 +39,31 @@ public class Client {
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
-            this.listenServer(input);
-            while (shouldWork) {
-                String message = readCommand();
-                try {
-                    processInput(output);
-                }
-                catch (EndOfSessionException e) {
-                    shouldWork = false;
-                }
-            }
+            listenServer(input);
+            sendToServer(output);
         } catch (IOException e) {
             System.out.println("The server is not responding. Please restart chat.");
         }
     }
 
-    private String readCommand() {
+    String readCommand() {
         Scanner in = new Scanner(System.in);
         return in.nextLine();
     }
 
-    private void processInput(DataOutputStream output) throws IOException {
+     void sendToServer(DataOutputStream outputStream) throws IOException {
+        while (shouldWork) {
+            String message = readCommand();
+            try {
+                processInput(outputStream);
+            }
+            catch (EndOfSessionException e) {
+                shouldWork = false;
+            }
+        }
+    }
+
+    void processInput(DataOutputStream output) throws IOException {
         try {
             processQuery(readCommand(), output);
         }
@@ -68,13 +72,13 @@ public class Client {
         }
     }
 
-    private void processQuery(String message, DataOutputStream output) throws IOException {
+    void processQuery(String message, DataOutputStream output) throws IOException {
         Query query = QueryFactory.GetQuery(message);
         output.writeUTF(query.toString());
         output.flush();
     }
 
-    private void listenServer(DataInputStream input) {
+    void listenServer(DataInputStream input) {
         Thread thread = new Thread(()->{
         while (true) {
             try {
