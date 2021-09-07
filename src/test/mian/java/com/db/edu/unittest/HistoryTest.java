@@ -3,7 +3,6 @@ package com.db.edu.unittest;
 import com.db.edu.utils.History;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -14,7 +13,8 @@ public class HistoryTest {
     File file;
     History history;
     String filePath = "historyTest";
-    String message = "Message";
+    String message1 = "Message1";
+    String message2 = "Message2";
 
     @BeforeEach
     public void setUp() {
@@ -29,32 +29,34 @@ public class HistoryTest {
 
     @Test
     public void saveToHistory() {
-        history.save(message);
+        history.save(message1);
+        history.save(message2);
         StringBuilder fileContent = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            while (br.ready())
+            while (br.ready()) {
                 fileContent.append(br.readLine());
+                fileContent.append("\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertEquals(message, fileContent.toString());
+        assertEquals(message1+"\n"+message2+"\n", fileContent.toString());
     }
 
     @Test
     public void loadFromFilledHistory() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            bw.write(message);
+            bw.write(message1);
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         String historyContent = history.load();
-        assertEquals(message, historyContent);
+        assertEquals(message1, historyContent);
     }
 
     @Test
-    @Disabled
     public void loadFromEmptyHistory() {
         String historyContent = history.load();
         assertEquals("History is empty", historyContent);
