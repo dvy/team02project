@@ -1,7 +1,10 @@
 package com.db.edu.server;
 
+import com.db.edu.utils.NetworkIOController;
+
 import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class Server {
@@ -9,19 +12,21 @@ public class Server {
 
     private int port;
     private String historyFilePath;
-    private ServerSocketConnectionController controller = new ServerSocketConnectionController();
+    private ServerSocketConnectionController controller;
 
     /**
      * Class Server implements a logic of Metaphora chat server.
      *
      * @param port - number of port server should be listening
      */
-    public Server(int port, String historyFilePath) {
+    public Server(int port, String historyFilePath, ServerSocketConnectionController controller) {
+        this.controller = controller;
         this.port = port;
         this.historyFilePath = historyFilePath;
     }
 
-    public Server(int port) {
+    public Server(int port, ServerSocketConnectionController controller) {
+        this.controller = controller;
         this.port = port;
         this.historyFilePath = defaultHistoryFilePath;
     }
@@ -61,7 +66,10 @@ public class Server {
             t.start();
 
             while (!shouldExit) {
-                controller.pushNewConnection(new ServerSocketConnection(listener.accept(), historyFilePath));
+                Socket acceptedSocket = listener.accept();
+                NetworkIOController networkIOController = new NetworkIOController(acceptedSocket);
+                controller.pushNewConnection(new ServerSocketConnection(networkIOController,
+                        acceptedSocket.getRemoteSocketAddress(), historyFilePath));
             }
         }
     }

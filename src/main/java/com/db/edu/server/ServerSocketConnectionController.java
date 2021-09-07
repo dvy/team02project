@@ -1,5 +1,6 @@
 package com.db.edu.server;
 
+import com.db.edu.exceptions.MessageWriteException;
 import com.db.edu.exceptions.SocketDisconnectedException;
 
 import java.io.IOException;
@@ -27,8 +28,8 @@ public class ServerSocketConnectionController implements Runnable {
                 for (ServerSocketConnection connection : connections) {
                     try {
                         connection.send(nextMessage.get());
-                    } catch (IOException e) {
-                        System.out.println("Can't send message to " + connection.getAddress() + " : IO error");
+                    } catch (MessageWriteException e) {
+                        System.out.println("Can't send message to " + connection.getAddress());
                     }
                 }
             }

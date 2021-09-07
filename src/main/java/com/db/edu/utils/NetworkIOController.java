@@ -1,7 +1,7 @@
 package com.db.edu.utils;
 
 import com.db.edu.exceptions.MessageReadException;
-import com.db.edu.exceptions.MessageSendException;
+import com.db.edu.exceptions.MessageWriteException;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,12 +20,12 @@ public class NetworkIOController implements Closeable {
         outputStream.close();
     }
 
-    public void write(String message) throws MessageSendException {
+    public void write(String message) throws MessageWriteException {
         try {
             outputStream.writeUTF(message);
             outputStream.flush();
         } catch (IOException e) {
-            throw new MessageSendException();
+            throw new MessageWriteException();
         }
     }
 

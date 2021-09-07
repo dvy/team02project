@@ -1,12 +1,11 @@
 package com.db.edu.server;
 
-import com.db.edu.exceptions.SocketDisconnectedException;
+import com.db.edu.exceptions.MessageReadException;
+import com.db.edu.exceptions.MessageWriteException;
 import com.db.edu.utils.History;
+import com.db.edu.utils.NetworkIOController;
 
-import java.io.*;
-import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -14,13 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ServerSocketConnection implements Runnable {
+    private final static String sendPrefix = "/snd";
+    private final static String historyPrefix = "/hist";
 
     private static ConcurrentHashMap<SocketAddress, String> connections = new ConcurrentHashMap<>();
     private static ConcurrentLinkedQueue<String> messageBuffer = new ConcurrentLinkedQueue<>();
 
-    private Socket connection;
-    private DataInputStream networkInput;
-    private DataOutputStream networkOutput;
+    private NetworkIOController networkIOController;
     private SocketAddress address;
 
     private History history;
@@ -28,15 +27,14 @@ public class ServerSocketConnection implements Runnable {
         return Optional.ofNullable(messageBuffer.poll());
     }
 
-    public ServerSocketConnection(Socket connection, String filePath) throws IOException {
-        this.connection = connection;
-        this.networkInput = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-        this.networkOutput = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+    public ServerSocketConnection(NetworkIOController networkIOController, SocketAddress address, String filePath) {
+        this.networkIOController = networkIOController;
 
         this.history = new History(filePath);
-        address = connection.getRemoteSocketAddress();
+        this.address = address;
+
         if (address != null && !connections.containsKey(address)) {
-            connections.put(address, address.toString());
+            connections.put(this.address, this.address.toString());
         }
     }
 
@@ -44,9 +42,12 @@ public class ServerSocketConnection implements Runnable {
         return address;
     }
 
-    public void send(String message) throws IOException {
-        networkOutput.writeUTF(message);
-        networkOutput.flush();
+    public void send(String message) throws MessageWriteException {
+        networkIOController.write(message);
+    }
+
+    public String read() throws MessageReadException {
+        return networkIOController.read();
     }
 
     String formatMessage(String pattern, String message){
@@ -60,27 +61,25 @@ public class ServerSocketConnection implements Runnable {
         history.save(message);
     }
 
-    @Override
-    public void run() {
-        while (isConnected()) {
-            try {
-                final String message = networkInput.readUTF();
-                if (message.startsWith("/snd ")) {
-                    processMessageToSend(formatMessage("yyyy/MM/dd HH:mm:ss", message));
-                } else if (message.equals("/hist")) {
-                    send(history.load());
-                }
-            } catch (SocketException e) {
-                System.out.println("Socket " + address.toString() + " disconnected.");
-                throw new SocketDisconnectedException(address.toString());
-            } catch (IOException e) {
-                System.out.println("Socket " + address.toString() + " exception while reading.");
-                throw new SocketDisconnectedException(address.toString());
-            }
-        }
+    void processHistoryMessage(String message) throws MessageWriteException {
+        send(history.load());
     }
 
-    public boolean isConnected() {
-        return connection.isConnected();
+    void processMessage(String message) throws MessageWriteException {
+        if (message.startsWith(sendPrefix)) processMessageToSend(formatMessage("yyyy/MM/dd HH:mm:ss", message));
+        if (message.startsWith(historyPrefix)) processHistoryMessage(message);
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                processMessage(read());
+            } catch (MessageWriteException e) {
+                System.out.println("Socket " + address.toString() + " : Can't send message.");
+            } catch (MessageReadException e) {
+                System.out.println("Socket " + address.toString() + " : Can't read message.");
+            }
+        }
     }
 }
