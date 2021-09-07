@@ -4,7 +4,7 @@ import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.QueryProcessingException;
 import com.db.edu.query.Query;
 import com.db.edu.query.QueryFactory;
-import com.db.edu.utils.NetworkController;
+import com.db.edu.utils.NetworkIOController;
 
 import java.io.*;
 import java.util.Scanner;
@@ -17,10 +17,10 @@ import java.util.Scanner;
  */
 public class Client {
     private boolean shouldWork = true;
-    private NetworkController networkController;
+    private NetworkIOController networkIOController;
 
-    public Client(NetworkController networkController) {
-        this.networkController = networkController;
+    public Client(NetworkIOController networkIOController) {
+        this.networkIOController = networkIOController;
     }
 
     /**
@@ -62,15 +62,15 @@ public class Client {
 
     void processQuery(String message) throws IOException {
         Query query = QueryFactory.getQuery(message);
-        networkController.getOutputStream().writeUTF(query.toString());
-        networkController.getOutputStream().flush();
+        networkIOController.getOutputStream().writeUTF(query.toString());
+        networkIOController.getOutputStream().flush();
     }
 
     void listenServer() {
         Thread thread = new Thread(()->{
         while (true) {
             try {
-                System.out.println(networkController.getInputStream().readUTF());
+                System.out.println(networkIOController.getInputStream().readUTF());
             } catch (IOException e) {
                 break;
             }
