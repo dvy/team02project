@@ -28,43 +28,43 @@ public class ClientTest implements SysoutCaptureAndAssertionAbility {
         resetOut();
     }
 
-    @Test
-    public void weCanSendStringMessageToServerIfItsLengthIsLessThan150() throws IOException {
-        String message = "Hello";
-        if (client.lengthCheck(message)) {
-            client.sendMessage(message, output);
-        }
+//    @Test
+//    public void weCanSendStringMessageToServerIfItsLengthIsLessThan150() throws IOException {
+//        String message = "Hello";
+//        if (client.lengthCheck(message)) {
+//            client.sendMessage(message, output);
+//        }
+//
+//        verify(output, times(1)).writeUTF("Hello");
+//        verify(output, times(1)).flush();
+//    }
 
-        verify(output, times(1)).writeUTF("Hello");
-        verify(output, times(1)).flush();
-    }
-
-    @Test
-    public void weCanNotSendMessageWhichLengthIsMoreThan150Symbols() {
-        Assertions.assertFalse(client.lengthCheck("/snd " +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa" +
-                        "aaaaaaaaaaaaaaaaaaaa"));
-    }
-
-    @Test
-    public void weWillReceiveWarningIfWeWillTryToSendTooLongMessage() {
-        client.lengthCheck("/snd " +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaa");
-        assertSysoutContains("Message length should be less than 150 symbols");
-    }
+//    @Test
+//    public void weCanNotSendMessageWhichLengthIsMoreThan150Symbols() {
+//        Assertions.assertFalse(client.lengthCheck("/snd " +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa" +
+//                        "aaaaaaaaaaaaaaaaaaaa"));
+//    }
+//
+//    @Test
+//    public void weWillReceiveWarningIfWeWillTryToSendTooLongMessage() {
+//        client.lengthCheck("/snd " +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa" +
+//                "aaaaaaaaaaaaaaaaaaaa");
+//        assertSysoutContains("Message length should be less than 150 symbols");
+//    }
 
     @Test
     public void weCanMakeAConnectionWithServer() {

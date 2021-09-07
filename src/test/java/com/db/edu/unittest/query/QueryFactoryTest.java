@@ -1,13 +1,30 @@
-package com.db.edu.unittest;
+package com.db.edu.unittest.query;
 
 import com.db.edu.exceptions.QueryProcessingException;
 import com.db.edu.query.QueryFactory;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QueryTest {
+public class QueryFactoryTest {
+    @Test
+    public void weWillReceiveQueryProcessingExceptionIfWeWillParseEmptyString() {
+        assertThrows(QueryProcessingException.class,
+                () -> QueryFactory.GetQuery(""));
+    }
+
+    @Test
+    public void weWillReceiveQueryProcessingExceptionIfWeWillParseSlashString() {
+        assertThrows(QueryProcessingException.class,
+                () -> QueryFactory.GetQuery("hi"));
+    }
+
+    @Test
+    public void weWillReceiveQueryProcessingExceptionIfWeWillEnterIncorrectCommand() {
+        assertThrows(QueryProcessingException.class,
+                () -> QueryFactory.GetQuery("/incorrect command"));
+    }
+
     @Test
     void shouldReturnErrorWhenTrySendEmptyMessage() {
         assertThrows(QueryProcessingException.class, () -> QueryFactory.GetQuery("/snd"));
