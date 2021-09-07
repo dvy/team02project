@@ -49,17 +49,24 @@ public class ServerSocketConnection implements Runnable {
         networkOutput.flush();
     }
 
+    private String formatMessage(String pattern, String message){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        return "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
+    }
+
+    private void processMessageToSend(String message){
+        messageBuffer.add(message);
+        history.save(message);
+    }
+
     @Override
     public void run() {
         while (true) {
             try {
                 final String message = networkInput.readUTF();
                 if (message.startsWith("/snd ")) {
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    String processedMessage = "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst("/snd ", "");
-                    messageBuffer.add(processedMessage);
-                    history.save(processedMessage);
+                    processMessageToSend(formatMessage("yyyy/MM/dd HH:mm:ss", message));
                 } else if (message.equals("/hist")) {
                     send(history.load());
                 }
@@ -67,7 +74,8 @@ public class ServerSocketConnection implements Runnable {
                 System.out.println("Socket " + address.toString() + " disconnected.");
                 throw new SocketDisconnectedException(address.toString());
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Socket " + address.toString() + " exception while reading.");
+                return;
             }
         }
     }

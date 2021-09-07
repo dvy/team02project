@@ -18,9 +18,10 @@ public class History {
             historyLock.writeLock().lock();
             fileWriter.append(processedMessage + System.lineSeparator());
             fileWriter.flush();
-            historyLock.writeLock().unlock();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            historyLock.writeLock().unlock();
         }
 
     }
@@ -30,9 +31,10 @@ public class History {
         try (BufferedReader fileReader = new BufferedReader(new FileReader(historyFilePath))){
             historyLock.readLock().lock();
             historyMessage = fileReader.lines().collect(Collectors.joining(System.lineSeparator()));
-            historyLock.readLock().unlock();
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } finally {
+            historyLock.readLock().unlock();
         }
 
         return historyMessage.isEmpty() ? "History is empty" : historyMessage;
