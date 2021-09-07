@@ -12,6 +12,8 @@ public class QueryFactory {
                 return new SendQuery(parsed.body);
             case "/hist":
                 return new HistoryQuery(parsed.body);
+            case "/chid":
+                return new ChangeIDQuery(parsed.body);
             default:
                 throw new QueryProcessingException("Unknown command");
         }
