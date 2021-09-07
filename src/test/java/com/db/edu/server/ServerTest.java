@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServerTest {
     @Test
     public void shouldThrowExceptionWhenTheWrongPortSelected() {
-        Server server = new Server(-1);
+        ServerSocketConnectionController controller = new ServerSocketConnectionController();
+        Server server = new Server(-1, controller);
         assertThrows(IllegalArgumentException.class, () -> server.start());
     }
 }

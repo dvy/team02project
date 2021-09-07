@@ -9,19 +9,21 @@ public class Server {
 
     private int port;
     private String historyFilePath;
-    private ServerSocketConnectionController controller = new ServerSocketConnectionController();
+    private ServerSocketConnectionController controller;
 
     /**
      * Class Server implements a logic of Metaphora chat server.
      *
      * @param port - number of port server should be listening
      */
-    public Server(int port, String historyFilePath) {
+    public Server(int port, String historyFilePath, ServerSocketConnectionController controller) {
+        this.controller = controller;
         this.port = port;
         this.historyFilePath = historyFilePath;
     }
 
-    public Server(int port) {
+    public Server(int port, ServerSocketConnectionController controller) {
+        this.controller = controller;
         this.port = port;
         this.historyFilePath = defaultHistoryFilePath;
     }
