@@ -14,8 +14,8 @@ public class History {
     }
 
     public void save(String processedMessage) {
+        historyLock.writeLock().lock();
         try(BufferedWriter fileWriter = new BufferedWriter(new FileWriter(historyFilePath, true))) {
-            historyLock.writeLock().lock();
             fileWriter.append(processedMessage + System.lineSeparator());
             fileWriter.flush();
         } catch (IOException e) {
@@ -28,8 +28,8 @@ public class History {
 
     public String load(){
         String historyMessage = "";
+        historyLock.readLock().lock();
         try (BufferedReader fileReader = new BufferedReader(new FileReader(historyFilePath))){
-            historyLock.readLock().lock();
             historyMessage = fileReader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
             System.out.println(e.getMessage());
