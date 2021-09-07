@@ -62,15 +62,14 @@ public class Client {
 
     void processQuery(String message) throws IOException {
         Query query = QueryFactory.getQuery(message);
-        networkIOController.getOutputStream().writeUTF(query.toString());
-        networkIOController.getOutputStream().flush();
+        networkIOController.write(query.toString());
     }
 
     void listenServer() {
         Thread thread = new Thread(()->{
         while (true) {
             try {
-                System.out.println(networkIOController.getInputStream().readUTF());
+                System.out.println(networkIOController.read());
             } catch (IOException e) {
                 break;
             }
