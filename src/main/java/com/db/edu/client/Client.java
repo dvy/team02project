@@ -1,11 +1,13 @@
 package com.db.edu.client;
 
+import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.QueryProcessingException;
 import com.db.edu.query.Query;
 import com.db.edu.query.QueryFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
@@ -17,6 +19,7 @@ import java.util.Scanner;
 public class Client {
     private final String host;
     private final int port;
+    private boolean shouldWork = true;
 
     /**
      * @param host - host connection number
@@ -36,9 +39,15 @@ public class Client {
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
                 final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()))
         ) {
-            listenServer(input);
-            while (true) {
-                processInput(output);
+            this.listenServer(input);
+            while (shouldWork) {
+                String message = readCommand();
+                try {
+                    processInput(output);
+                }
+                catch (EndOfSessionException e) {
+                    shouldWork = false;
+                }
             }
         } catch (IOException e) {
             System.out.println("The server is not responding. Please restart chat.");

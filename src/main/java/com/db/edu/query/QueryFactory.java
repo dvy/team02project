@@ -3,7 +3,6 @@ package com.db.edu.query;
 import com.db.edu.exceptions.QueryProcessingException;
 import java.util.Objects;
 
-
 public class QueryFactory {
     public static Query GetQuery(String query) {
         ParsedQuery parsed = QueryFactory.parse(query);
@@ -14,6 +13,9 @@ public class QueryFactory {
                 return new HistoryQuery(parsed.getBody());
             case "/chid":
                 return new ChangeIDQuery(parsed.getBody());
+            case "/exit":
+                return new ExitQuery(parsed.getBody());
+
             default:
                 throw new QueryProcessingException("Unknown command");
         }
@@ -32,6 +34,7 @@ public class QueryFactory {
     private static class ParsedQuery {
         private final String type;
         private final String body;
+
         ParsedQuery(String typeString, String body) {
             this.type = typeString;
             this.body = body;
