@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.ServerSocket;
 
 public class Server {
+    private static String defaultHistoryFilePath = "history.log";
+
     private int port;
     private String historyFilePath;
     private ServerSocketConnectionController controller = new ServerSocketConnectionController();
@@ -18,17 +20,20 @@ public class Server {
         this.historyFilePath = historyFilePath;
     }
 
+    public Server(int port) {
+        this.port = port;
+        this.historyFilePath = defaultHistoryFilePath;
+    }
+
     /**
      * Start listening given port. Create new Socket when connection established.
      */
-    public void start() {
+    public void start() throws IOException {
         new Thread(controller).start();
         try (final ServerSocket listener = new ServerSocket(port)) {
             while (true) {
                 controller.pushNewConnection(new ServerSocketConnection(listener.accept(), historyFilePath));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

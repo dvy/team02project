@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ServerSocketConnection implements Runnable {
 
@@ -40,13 +39,13 @@ public class ServerSocketConnection implements Runnable {
         }
     }
 
-    public void send(String message) {
-        try {
-            networkOutput.writeUTF(message);
-            networkOutput.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public SocketAddress getAddress() {
+        return address;
+    }
+
+    public void send(String message) throws IOException {
+        networkOutput.writeUTF(message);
+        networkOutput.flush();
     }
 
     @Override
