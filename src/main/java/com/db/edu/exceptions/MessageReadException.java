@@ -1,4 +1,9 @@
 package com.db.edu.exceptions;
 
-public class MessageReadException extends Exception {
+import java.io.IOException;
+
+public class MessageReadException extends IOException {
+    public MessageReadException(String message) {
+        super(message);
+    }
 }

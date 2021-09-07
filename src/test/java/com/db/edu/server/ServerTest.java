@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mock;
 public class ServerTest {
     @Test
     public void shouldThrowExceptionWhenTheWrongPortSelected() {
-        ServerSocketConnectionController controller = mock(ServerSocketConnectionController.class);
+        ServerSocketConnectionController controller = new ServerSocketConnectionController();
         Server server = new Server(-1, controller);
-        assertThrows(IllegalArgumentException.class, server::start);
+        assertThrows(IllegalArgumentException.class, () -> server.start());
     }
 }

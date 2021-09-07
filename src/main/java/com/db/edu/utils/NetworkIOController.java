@@ -25,7 +25,7 @@ public class NetworkIOController implements Closeable {
             outputStream.writeUTF(message);
             outputStream.flush();
         } catch (IOException e) {
-            throw new MessageWriteException();
+            throw new MessageSendException("Couldn't send data");
         }
     }
 
@@ -33,15 +33,7 @@ public class NetworkIOController implements Closeable {
         try {
             return inputStream.readUTF();
         } catch (IOException e) {
-            throw new MessageReadException();
+            throw new MessageReadException("Couldn't get data");
         }
-    }
-
-    public DataInputStream getInputStream() {
-        return inputStream;
-    }
-
-    public DataOutputStream getOutputStream() {
-        return outputStream;
     }
 }
