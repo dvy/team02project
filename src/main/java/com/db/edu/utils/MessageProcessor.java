@@ -20,8 +20,12 @@ public class MessageProcessor {
         return Optional.ofNullable(messageBuffer.poll());
     }
 
-    public static void setHistory(String filePath) {
-        history = new History(filePath);
+//    public static void setHistory(String filePath) {
+//        history = new History(filePath);
+//    }
+
+    public static void setHistory(History hist) {
+        history = hist;
     }
 
     public static String processMessage(Query query) {
