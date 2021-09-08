@@ -1,5 +1,6 @@
 package com.db.edu.server;
 
+import com.db.edu.utils.History;
 import com.db.edu.utils.MessageProcessor;
 import com.db.edu.utils.NetworkIOController;
 
@@ -20,7 +21,7 @@ public class Server {
     public Server(int port, String historyFilePath, ServerSocketConnectionController controller) {
         this.controller = controller;
         this.port = port;
-        MessageProcessor.setHistory(historyFilePath);
+        MessageProcessor.setHistory(new History(historyFilePath));
     }
 
     volatile private boolean shouldExit;
