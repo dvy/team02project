@@ -10,7 +10,7 @@ public class ServerApplication {
         try {
             server.start();
         } catch (IOException e) {
-            System.out.println("Server is offline now");
+            System.err.println("Server is offline now");
         }
     }
 }

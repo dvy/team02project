@@ -10,8 +10,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Server {
-    private int port;
-    private ServerSocketConnectionController controller;
+    private final int port;
+    private final ServerSocketConnectionController controller;
 
     /**
      * Class Server implements a logic of Metaphora chat server.
@@ -24,7 +24,7 @@ public class Server {
         MessageProcessor.setHistory(new History(historyFilePath));
     }
 
-    volatile private boolean shouldExit;
+    private volatile boolean shouldExit;
 
     /**
      * Start listening given port. Create new Socket when connection established.
@@ -42,11 +42,6 @@ public class Server {
                         String s = scanner.next();
                         if (s.equals("/exit")) {
                             controllerThread.interrupt();
-                            try {
-                                listener.close();
-                            } catch (IOException e) {
-                                System.out.println("Can't close server");
-                            }
                             System.out.println("Server shut down.");
                             shouldExit = true;
                             return;

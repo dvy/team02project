@@ -14,14 +14,14 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerSocketConnection implements Runnable {
-    private static ConcurrentHashMap<SocketAddress, String> connectionsNickNames = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<SocketAddress, String> connectionsNickNames = new ConcurrentHashMap<>();
 
     public static Optional<String> getNickName(SocketAddress address){
         return Optional.ofNullable(connectionsNickNames.get(address));
     }
 
-    private NetworkIOController networkIOController;
-    private SocketAddress address;
+    private final NetworkIOController networkIOController;
+    private final SocketAddress address;
 
     public ServerSocketConnection(NetworkIOController networkIOController, SocketAddress address) {
         this.networkIOController = networkIOController;
@@ -41,8 +41,7 @@ public class ServerSocketConnection implements Runnable {
     }
 
     public String read() throws MessageReadException {
-        String str = networkIOController.read();
-        return str;
+        return networkIOController.read();
     }
 
     Query readNextQuery() throws QueryProcessingException, MessageReadException {
