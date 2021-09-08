@@ -15,7 +15,7 @@ public class SendQueryTest {
 
     @Test
     public void shouldDecorateQueryWithPrefix() {
-        assertEquals("/snd Hello", new SendQuery("Hello").toString());
+        assertTrue(new SendQuery("Hello", "122.122.2.2").toString().contains("122.122.2.2 : Hello"));
     }
 
     @Test
