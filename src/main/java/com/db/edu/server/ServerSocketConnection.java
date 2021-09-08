@@ -62,10 +62,8 @@ public class ServerSocketConnection implements Runnable {
                 }
                 String toSend = MessageProcessor.processMessage(query);
                 if (toSend == null || toSend.isEmpty()) {
-                    System.out.println("str is null");
                     continue;
                 }
-                System.out.println(toSend);
                 send(toSend);
             } catch (MessageSendException e) {
                 System.out.println("Socket " + address.toString() + " : Can't send message.");
