@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServerSocketConnection implements Runnable {
     private static ConcurrentHashMap<SocketAddress, String> connectionsNickNames = new ConcurrentHashMap<>();
 
-    public Optional<String> getNickName(SocketAddress address){
+    public static Optional<String> getNickName(SocketAddress address){
         return Optional.ofNullable(connectionsNickNames.get(address));
     }
 
