@@ -2,7 +2,12 @@ package com.db.edu.server;
 
 import com.db.edu.exceptions.MessageReadException;
 import com.db.edu.exceptions.MessageSendException;
+import com.db.edu.exceptions.QueryProcessingException;
+import com.db.edu.exceptions.SocketDisconnectedException;
+import com.db.edu.query.Query;
+import com.db.edu.query.QueryFactory;
 import com.db.edu.utils.History;
+import com.db.edu.utils.MessageProcessor;
 import com.db.edu.utils.NetworkIOController;
 
 import java.net.SocketAddress;
@@ -17,20 +22,13 @@ public class ServerSocketConnection implements Runnable {
     private final static String historyPrefix = "/hist";
 
     private static ConcurrentHashMap<SocketAddress, String> connections = new ConcurrentHashMap<>();
-    private static ConcurrentLinkedQueue<String> messageBuffer = new ConcurrentLinkedQueue<>();
 
     private NetworkIOController networkIOController;
     private SocketAddress address;
 
-    private History history;
-    public static Optional<String> getNextMessageFromBuffer() {
-        return Optional.ofNullable(messageBuffer.poll());
-    }
-
-    public ServerSocketConnection(NetworkIOController networkIOController, SocketAddress address, String filePath) {
+    public ServerSocketConnection(NetworkIOController networkIOController, SocketAddress address) {
         this.networkIOController = networkIOController;
 
-        this.history = new History(filePath);
         this.address = address;
 
         if (address != null && !connections.containsKey(address)) {
@@ -47,38 +45,37 @@ public class ServerSocketConnection implements Runnable {
     }
 
     public String read() throws MessageReadException {
-        return networkIOController.read();
+        String str = networkIOController.read();
+        System.out.println(str);
+        return str;
     }
 
-    String formatMessage(String pattern, String message){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
-        LocalDateTime now = LocalDateTime.now();
-        return "[" + dtf.format(now) + "] " + connections.get(address) + " : " + message.replaceFirst(sendPrefix, "");
-    }
 
-    void processMessageToSend(String message){
-        messageBuffer.add(message);
-        history.save(message);
-    }
-
-    void processHistoryMessage() throws MessageSendException {
-        send(history.load());
-    }
-
-    void processMessage(String message) throws MessageSendException {
-        if (message.startsWith(sendPrefix)) processMessageToSend(formatMessage("yyyy/MM/dd HH:mm:ss", message));
-        if (message.equals(historyPrefix)) processHistoryMessage();
-    }
 
     @Override
     public void run() {
         while (true) {
             try {
-                processMessage(read());
+                MessageProcessor messageProcessor = new MessageProcessor();
+                Query query;
+                try {
+                    query = QueryFactory.getQuery(read(), connections.get(address));
+                } catch (QueryProcessingException exception) {
+                    send(exception.getMessage());
+                    continue;
+                }
+                String toSend = messageProcessor.processMessage(query);
+                if(toSend == null || toSend.isEmpty()) {
+                    System.out.println("str is null");
+                    continue;
+                }
+                System.out.println(toSend);
+                send(toSend);
             } catch (MessageSendException e) {
                 System.out.println("Socket " + address.toString() + " : Can't send message.");
-            } catch (MessageReadException e) {
-                System.out.println("Socket " + address.toString() + " : Can't read message.");
+            }
+            catch (MessageReadException e) {
+                throw new SocketDisconnectedException("Socket " + address.toString() + " : disconnected.");
             }
         }
     }

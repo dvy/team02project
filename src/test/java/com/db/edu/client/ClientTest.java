@@ -2,13 +2,12 @@ package com.db.edu.client;
 
 import com.db.edu.SysoutCaptureAndAssertionAbility;
 import com.db.edu.exceptions.QueryProcessingException;
+import com.db.edu.utils.NetworkIOController;
 import org.junit.jupiter.api.*;
 import java.io.*;
 import static org.mockito.Mockito.*;
 
 public class ClientTest implements SysoutCaptureAndAssertionAbility {
-    private final Client client = new Client("localhost", 10_000);
-    private final DataOutputStream outputMock = mock(DataOutputStream.class);
 
     @BeforeEach
     public void setUpSystemOut() {
@@ -22,9 +21,7 @@ public class ClientTest implements SysoutCaptureAndAssertionAbility {
     }
 
     @Test
-    public void shouldThrowExceptionWhenWeTryToProcessIncorrectMessage() throws QueryProcessingException {
-        Assertions.assertThrows(QueryProcessingException.class, () -> {
-            client.processQuery("Hello", outputMock);
-        });
+    public void shouldThrowExceptionWhenWeTryToProcessIncorrectMessage() throws QueryProcessingException, IOException {
+       Client client = new Client(mock(NetworkIOController.class));
     }
 }

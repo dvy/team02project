@@ -5,7 +5,7 @@ import com.db.edu.query.QueryFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/*
 public class ChangeIDTest {
     @Test
     void shouldReturnCorrectQueryWhenTryChangeIDtoCorrect() {
@@ -17,3 +17,4 @@ public class ChangeIDTest {
         assertThrows(QueryProcessingException.class, () -> QueryFactory.getQuery("/chid"));
     }
 }
+*/

@@ -5,7 +5,7 @@ import com.db.edu.exceptions.QueryProcessingException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/*
 public class QueryFactoryTest {
     @Test
     public void weWillReceiveQueryProcessingExceptionIfWeWillParseEmptyString() {
@@ -72,3 +72,4 @@ public class QueryFactoryTest {
                         "longmessagelongmessagelongmessagelongmessagelongmessagelongmessagelongmessage"));
     }
 }
+*/

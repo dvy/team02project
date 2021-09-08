@@ -1,5 +1,6 @@
 package com.db.edu.server;
 
+import com.db.edu.utils.MessageProcessor;
 import com.db.edu.utils.NetworkIOController;
 
 import java.io.*;
@@ -8,10 +9,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Server {
-    private static String defaultHistoryFilePath = "history.log";
-
     private int port;
-    private String historyFilePath;
     private ServerSocketConnectionController controller;
 
     /**
@@ -22,13 +20,7 @@ public class Server {
     public Server(int port, String historyFilePath, ServerSocketConnectionController controller) {
         this.controller = controller;
         this.port = port;
-        this.historyFilePath = historyFilePath;
-    }
-
-    public Server(int port, ServerSocketConnectionController controller) {
-        this.controller = controller;
-        this.port = port;
-        this.historyFilePath = defaultHistoryFilePath;
+        MessageProcessor.setHistory(historyFilePath);
     }
 
     volatile private boolean shouldExit;
@@ -69,7 +61,7 @@ public class Server {
                 Socket acceptedSocket = listener.accept();
                 NetworkIOController networkIOController = new NetworkIOController(acceptedSocket);
                 controller.pushNewConnection(new ServerSocketConnection(networkIOController,
-                        acceptedSocket.getRemoteSocketAddress(), historyFilePath));
+                        acceptedSocket.getRemoteSocketAddress()));
             }
         }
     }

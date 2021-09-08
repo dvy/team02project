@@ -6,13 +6,14 @@ import com.db.edu.exceptions.SocketDisconnectedException;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.db.edu.server.ServerSocketConnection.getNextMessageFromBuffer;
+import static com.db.edu.utils.MessageProcessor.getNextMessageFromBuffer;
 
 public class ServerSocketConnectionController implements Runnable {
     ConcurrentLinkedQueue<ServerSocketConnection> connections = new ConcurrentLinkedQueue<>();
 
     Thread.UncaughtExceptionHandler handler = (th, ex) -> {
         if (ex instanceof SocketDisconnectedException) {
+            System.out.println(ex.getMessage());
             connections.removeIf(a -> ex.getMessage().equals(a.getAddress().toString()));
         }
     };

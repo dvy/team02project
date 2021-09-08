@@ -9,18 +9,13 @@ public class QueryFactory {
     private QueryFactory() {
     }
 
-    public static Query getQuery(String query) {
+    public static Query getQuery(String query, String nickname) {
         ParsedQuery parsed = QueryFactory.parse(query);
         switch (parsed.getType()) {
             case "/snd":
-                return new SendQuery(parsed.getBody());
+                return new SendQuery(parsed.getBody(), nickname);
             case "/hist":
                 return new HistoryQuery(parsed.getBody());
-            case "/chid":
-                return new ChangeIDQuery(parsed.getBody());
-            case "/exit":
-                return new ExitQuery(parsed.getBody());
-
             default:
                 throw new QueryProcessingException("Unknown command");
         }
