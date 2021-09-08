@@ -7,8 +7,8 @@ import java.io.*;
 import java.net.Socket;
 
 public class NetworkIOController implements Closeable {
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
+    private final DataInputStream inputStream;
+    private final DataOutputStream outputStream;
 
     public NetworkIOController(Socket connection) throws IOException {
         this.inputStream = new DataInputStream(new BufferedInputStream(connection.getInputStream()));

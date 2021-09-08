@@ -6,8 +6,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public class History {
-    private String historyFilePath;
-    private ReentrantReadWriteLock historyLock = new ReentrantReadWriteLock();
+    private final String historyFilePath;
+    private final ReentrantReadWriteLock historyLock = new ReentrantReadWriteLock();
 
     public History(String filePath) {
         this.historyFilePath = filePath;
@@ -16,7 +16,8 @@ public class History {
     public void save(String processedMessage) {
         historyLock.writeLock().lock();
         try(BufferedWriter fileWriter = new BufferedWriter(new FileWriter(historyFilePath, true))) {
-            fileWriter.append(processedMessage + System.lineSeparator());
+            fileWriter.append(processedMessage)
+                    .append(System.lineSeparator());
             fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();

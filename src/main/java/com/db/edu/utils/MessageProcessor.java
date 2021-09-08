@@ -8,10 +8,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MessageProcessor {
-    private final static String sendPrefix = "/snd ";
-    private final static String historyPrefix = "/hist";
     private static History history;
-    private static ConcurrentLinkedQueue<String> messageBuffer = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<String> messageBuffer = new ConcurrentLinkedQueue<>();
 
     private MessageProcessor() {
     }
@@ -19,10 +17,6 @@ public class MessageProcessor {
     public static Optional<String> getNextMessageFromBuffer() {
         return Optional.ofNullable(messageBuffer.poll());
     }
-
-//    public static void setHistory(String filePath) {
-//        history = new History(filePath);
-//    }
 
     public static void setHistory(History hist) {
         history = hist;
