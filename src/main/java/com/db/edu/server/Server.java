@@ -60,8 +60,12 @@ public class Server {
             while (!shouldExit) {
                 Socket acceptedSocket = listener.accept();
                 NetworkIOController networkIOController = new NetworkIOController(acceptedSocket);
-                controller.pushNewConnection(new ServerSocketConnection(networkIOController,
-                        acceptedSocket.getRemoteSocketAddress()));
+                try {
+                    controller.pushNewConnection(new ServerSocketConnection(networkIOController,
+                            acceptedSocket.getRemoteSocketAddress()));
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }

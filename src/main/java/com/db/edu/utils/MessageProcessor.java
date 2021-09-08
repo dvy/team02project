@@ -1,15 +1,9 @@
 package com.db.edu.utils;
 
-
-import com.db.edu.exceptions.MessageSendException;
 import com.db.edu.query.HistoryQuery;
 import com.db.edu.query.Query;
 import com.db.edu.query.SendQuery;
 
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -19,8 +13,7 @@ public class MessageProcessor {
     private static History history;
     private static ConcurrentLinkedQueue<String> messageBuffer = new ConcurrentLinkedQueue<>();
 
-
-    public MessageProcessor() {
+    private MessageProcessor() {
     }
 
     public static Optional<String> getNextMessageFromBuffer() {
@@ -31,7 +24,7 @@ public class MessageProcessor {
         history = new History(filePath);
     }
 
-    public String processMessage(Query query) {
+    public static String processMessage(Query query) {
         if (query instanceof SendQuery) {
             return processMessage((SendQuery) query);
         } else if (query instanceof HistoryQuery) {
@@ -41,16 +34,14 @@ public class MessageProcessor {
         }
     }
 
-    public String processMessage(SendQuery query) {
-        System.out.println("send");
+    public static String processMessage(SendQuery query) {
         String message = query.toString();
         messageBuffer.add(message);
         history.save(message);
         return null;
     }
 
-    public String processMessage(HistoryQuery query) {
-        System.out.println("hist");
+    public static String processMessage(HistoryQuery query) {
         return history.load();
     }
 
