@@ -65,4 +65,14 @@ public class ClientTest implements SysoutCaptureAndAssertionAbility {
         client.sendToServer();
         verify(networkIOController, times(2)).write(any());
     }
+
+    @Test
+    public void shouldNotWriteToServerWhenMessageIsLong() throws QueryProcessingException, IOException {
+        writeToFile("/snd toolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessagetoolongmessage", "/exit");
+        Scanner scanner = new Scanner(new FileReader("testCases"));
+        NetworkIOController networkIOController = mock(NetworkIOController.class);
+        Client client = new Client(networkIOController, scanner);
+        client.sendToServer();
+        verify(networkIOController, times(0)).write(any());
+    }
 }
