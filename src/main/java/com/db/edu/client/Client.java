@@ -17,10 +17,11 @@ public class Client {
     private final int MAX_LENGTH = 150;
     private boolean shouldWork = true;
     private NetworkIOController networkIOController;
-
+    private Scanner scanner;
     //Scanner
-    public Client(NetworkIOController networkIOController) {
+    public Client(NetworkIOController networkIOController, Scanner scanner) {
         this.networkIOController = networkIOController;
+        this.scanner = scanner;
     }
 
     /**
@@ -36,8 +37,7 @@ public class Client {
     }
 
     String readCommand() {
-        Scanner in = new Scanner(System.in);
-        return in.nextLine();
+        return scanner.nextLine();
     }
 
     void sendToServer() throws IOException {
