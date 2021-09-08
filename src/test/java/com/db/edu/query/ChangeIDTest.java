@@ -1,12 +1,13 @@
-package com.db.edu.unittest.query;
+package com.db.edu.query;
 
 import com.db.edu.exceptions.QueryProcessingException;
 import com.db.edu.query.QueryFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-/*
+
 public class ChangeIDTest {
+    /*
     @Test
     void shouldReturnCorrectQueryWhenTryChangeIDtoCorrect() {
         assertEquals("/chid nickname", QueryFactory.getQuery("/chid nickname").toString());
@@ -16,5 +17,5 @@ public class ChangeIDTest {
     void shouldReturnErrorWhenTryChangeIDtoEmpty() {
         assertThrows(QueryProcessingException.class, () -> QueryFactory.getQuery("/chid"));
     }
-}
 */
+}
