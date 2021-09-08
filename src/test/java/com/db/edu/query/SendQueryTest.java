@@ -5,21 +5,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SendQueryTest {
+class SendQueryTest {
 
     @Test
-    public void shouldThrowQueryProcessingExceptionIfMessageIsNull() {
+    void shouldThrowQueryProcessingExceptionIfMessageIsNull() {
         assertThrows(QueryProcessingException.class,
                 () -> new SendQuery(null));
     }
 
     @Test
-    public void shouldDecorateQueryWithPrefix() {
+    void shouldDecorateQueryWithPrefix() {
         assertTrue(new SendQuery("Hello", "122.122.2.2").toString().contains("122.122.2.2 : Hello"));
     }
 
     @Test
-    public void shouldThrowQueryProcessingExceptionIfMessageIsTooLong() {
+    void shouldThrowQueryProcessingExceptionIfMessageIsTooLong() {
         assertThrows(QueryProcessingException.class,
                 () -> new SendQuery("aaaaaaaaaaaaaaaaaaaa" +
                                     "aaaaaaaaaaaaaaaaaaaa" +
