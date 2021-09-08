@@ -1,7 +1,6 @@
 package com.db.edu.client;
 
 import com.db.edu.utils.NetworkIOController;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -19,7 +18,7 @@ public class ClientApplication {
             Client client = new Client(networkIOController, scanner);
             client.socketConnectionRun();
         } catch (IOException exception) {
-            System.out.println("Couldn't connect to server. Please try again later.");
+            System.err.println("Couldn't connect to server. Please try again later.");
         }
 
     }

@@ -1,6 +1,5 @@
 package com.db.edu.client;
 
-import com.db.edu.exceptions.EndOfSessionException;
 import com.db.edu.exceptions.LongMessageException;
 import com.db.edu.utils.NetworkIOController;
 
@@ -14,10 +13,10 @@ import java.util.Scanner;
  * /hist - get history of all chat's messages
  */
 public class Client {
-    private final int MAX_LENGTH = 150;
+    private final static int MAX_LENGTH = 150;
     private boolean shouldWork = true;
-    private NetworkIOController networkIOController;
-    private Scanner scanner;
+    private final NetworkIOController networkIOController;
+    private final Scanner scanner;
     //Scanner
     public Client(NetworkIOController networkIOController, Scanner scanner) {
         this.networkIOController = networkIOController;
@@ -32,7 +31,7 @@ public class Client {
             listenServer();
             sendToServer();
         } catch (IOException e) {
-            System.out.println("The server is not responding. Please restart chat.");
+            System.err.println("The server is not responding. Please restart chat.");
         }
     }
 
@@ -53,7 +52,7 @@ public class Client {
                 }
                 networkIOController.write(message);
             } catch (LongMessageException e) {
-                System.out.println("Message too long. Max message length is 150");
+                System.err.println("Message too long. Max message length is 150");
             }
         }
     }
@@ -62,7 +61,7 @@ public class Client {
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
-                    System.out.println(networkIOController.read());
+                    System.err.println(networkIOController.read());
                 } catch (IOException e) {
                     break;
                 }
